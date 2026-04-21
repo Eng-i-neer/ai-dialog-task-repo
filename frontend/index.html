@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏋️ 减肥日志</title>
+  <meta name="description" content="个人减肥日志系统 — 体重追踪、饮食记录、运动管理、AI 智能分析">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
+
+  <!-- ★ 预连接：加速外部资源 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <!-- 字体 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap">
+
+  <!-- ★ 预加载 Chart.js -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" as="script">
+
+  <!-- 样式 -->
+  <link rel="stylesheet" href="/frontend/css/style.css">
+  <link rel="stylesheet" href="/frontend/css/components.css">
+  <link rel="stylesheet" href="/frontend/css/theme-zen.css">
+</head>
+
+<body>
+
+  <div class="app-layout">
+
+    <!-- ═══ 侧边栏 ═══ -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">🏋️</span>
+        <span class="logo-text">减肥日志</span>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <!-- 由 app.js 动态渲染 -->
+      </nav>
+    </aside>
+
+    <!-- ═══ 主内容区 ═══ -->
+    <div class="main-area">
+
+      <!-- 顶部栏 -->
+      <header class="topbar">
+        <div class="topbar-title" id="topbar-title">📊 数据仪表盘</div>
+        <div class="topbar-right">
+          <span class="topbar-date" id="topbar-date"></span>
+        </div>
+      </header>
+
+      <!-- 页面内容 -->
+      <main class="page-content" id="page-container">
+        <!-- 由 app.js 路由切换 -->
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+  <!-- 核心脚本（必须先加载） -->
+  <script src="/frontend/js/utils.js?_=__CACHE_BUST__"></script>
+  <script src="/frontend/js/api.js?_=__CACHE_BUST__"></script>
+
+  <!-- 页面模块（defer：不阻塞渲染，按序执行） -->
+  <script defer src="/frontend/js/pages/dashboard.js?_=__CACHE_BUST__"></script>
+  <script defer src="/frontend/js/pages/record.js?_=__CACHE_BUST__"></script>
+  <script defer src="/frontend/js/pages/meals.js?_=__CACHE_BUST__"></script>
+  <script defer src="/frontend/js/pages/exercise.js?_=__CACHE_BUST__"></script>
+  <script defer src="/frontend/js/pages/analysis.js?_=__CACHE_BUST__"></script>
+  <script defer src="/frontend/js/pages/settings.js?_=__CACHE_BUST__"></script>
+
+  <!-- SPA 路由（最后加载） -->
+  <script defer src="/frontend/js/app.js?_=__CACHE_BUST__"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+=== 服务状态 ===
+$ systemctl is-active weight-tracker
+active
+
+
+=== 服务详情 ===
+$ systemctl status weight-tracker --no-pager -l 2>&1 | tail -20
+● weight-tracker.service - Weight Tracker Application
+   Loaded: loaded (/etc/systemd/system/weight-tracker.service; enabled; vendor preset: disabled)
+   Active: active (running) since Thu 2026-03-05 20:29:12 CST; 21min ago
+ Main PID: 14593 (python)
+    Tasks: 5 (limit: 11716)
+   Memory: 23.4M
+   CGroup: /system.slice/weight-tracker.service
+           └─14593 /opt/weight-tracker/venv/bin/python backend/app.py
+
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ systemd[1]: Started Weight Tracker Application.
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]: ✅ 数据库初始化完成！
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]:    共创建 6 张表 + 9 个索引
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]:    已插入默认设置行
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]: ==================================================
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]: 🏋️ 减肥日志系统
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]: 📁 数据库: /opt/weight-tracker/backend/data/weight_tracker.db
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]: 🌐 访问: http://localhost:5000
+Mar 05 20:29:12 iZwz9arif0izzx7rc5zfdlZ python[14593]: ==================================================
+
+
+=== 5000端口 ===
+$ ss -tlnp | grep 5000
+LISTEN 0      1024         0.0.0.0:5000       0.0.0.0:*    users:(("python",pid=14593,fd=6))                                                 
+LISTEN 0      1024            [::]:5000          [::]:*    users:(("python",pid=14593,fd=10))
+
+
+=== 80端口 ===
+$ ss -tlnp | grep ':80'
+LISTEN 0      511          0.0.0.0:80         0.0.0.0:*    users:(("nginx",pid=15469,fd=6),("nginx",pid=15468,fd=6),("nginx",pid=15467,fd=6))
+
+
+=== Nginx错误日志 ===
+$ tail -15 /var/log/nginx/error.log
+2026/03/05 20:27:51 [warn] 14114#0: conflicting server name "_" on 0.0.0.0:80, ignored
+2026/03/05 20:27:51 [warn] 14132#0: conflicting server name "_" on 0.0.0.0:80, ignored
+2026/03/05 20:27:51 [warn] 14134#0: conflicting server name "_" on 0.0.0.0:80, ignored
+2026/03/05 20:27:55 [error] 14136#0: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 127.0.0.1, server: _, request: "GET /api/health HTTP/1.1", upstream: "http://127.0.0.1:5000/api/health", host: "127.0.0.1"
+2026/03/05 20:36:51 [warn] 14999#0: conflicting server name "_" on 0.0.0.0:80, ignored
+
+
+=== curl 5000 ===
+$ curl -s --connect-timeout 3 -o /dev/null -w '%{http_code}' http://127.0.0.1:5000/api/health
+200
+
+
+=== curl 80 ===
+$ curl -s --connect-timeout 3 -o /dev/null -w '%{http_code}' http://127.0.0.1/api/health
+200
+
+
+=== Nginx配置 ===
+$ cat /etc/nginx/conf.d/weight-tracker.conf
+server {
+    listen 80 default_server;
+    server_name _;
+
+    client_max_body_size 15M;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 120s;
+    }
+}
+
+
+=== conf.d目录 ===
+$ ls -la /etc/nginx/conf.d/
+total 12
+drwxr-xr-x 2 root root 4096 Mar  5 20:27 .
+drwxr-xr-x 4 root root 4096 Mar  5 20:37 ..
+-rw-r--r-- 1 root root  345 Mar  5 20:37 weight-tracker.conf
+
+
+=== nginx.conf ===
+$ cat /etc/nginx/nginx.conf
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+    sendfile            on;
+    keepalive_timeout   65;
+
+    # 加载 conf.d 下的配置
+    include /etc/nginx/conf.d/*.conf;
+}
+

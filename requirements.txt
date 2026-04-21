@@ -1,0 +1,9 @@
+# 🏋️ 减肥日志系统 — Python 依赖清单
+# 安装命令: pip install -r requirements.txt
+
+# === 核心依赖（必装）===
+flask>=2.3.0                # Web 服务框架
+waitress>=2.1.0             # 生产级 WSGI 服务器（替代 Flask 内置服务器）
+
+# === AI 分析（调用大模型 API）===
+requests>=2.28.0            # HTTP 请求（调用 DeepSeek/Doubao API）

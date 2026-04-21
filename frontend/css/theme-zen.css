@@ -1,0 +1,793 @@
+/* ═══════════════════════════════════════════════════════
+   🌿 Theme 2: "Zen Nature" — 禅意自然风格
+   通过 html.theme-zen 激活，覆盖全局 CSS 变量 + 组件形态
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── 变量覆盖 ─── */
+html.theme-zen {
+    /* 大地与呼吸 — 深底白卡对比 */
+    --bg-app: #d5d0c3;
+    /* 应用底色：暖棕灰（明显深于卡片） */
+    --bg-paper: #f5f3ee;
+    /* 卡片背景：温暖奶白（与底色拉开大色差） */
+    --grid-line: #c8c3b5;
+    --bg-sidebar: #2c3325;
+    /* 侧边栏：深森林绿 */
+    --sidebar-text: #e8e6dc;
+    --sidebar-active: rgba(107, 142, 35, 0.3);
+
+    /* 植物墨水 */
+    --ink-primary: #2a3321;
+    /* 主文字：更深的苔绿 */
+    --ink-secondary: #4a5240;
+    --ink-tertiary: #7a8168;
+    --border-ink: #4a5240;
+    --border-light: #c2bda8;
+
+    /* 生命力色彩 — 更鲜活 */
+    --color-accent: #5a8c1a;
+    /* 苔藓绿：更饱和 */
+    --color-accent-hover: #477012;
+    --color-success: #5a8c1a;
+    --color-warning: #c8874a;
+    /* 更浓的晚霞橙 */
+    --color-danger: #b03840;
+    --color-info: #4a7a7a;
+
+    /* 半透明填充 */
+    --fill-accent: rgba(90, 140, 26, 0.10);
+    --fill-success: rgba(90, 140, 26, 0.10);
+    --fill-warning: rgba(200, 135, 74, 0.12);
+    --fill-danger: rgba(176, 56, 64, 0.10);
+
+    /* 有机动效：慢节奏 */
+    --transition-snap: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Zen 专有变量 */
+    --zen-radius: 40px 15px 40px 15px;
+    --zen-radius-sm: 24px 10px 24px 10px;
+    --zen-radius-btn: 30px;
+    --shadow-zen: 0 8px 32px rgba(42, 51, 33, 0.10);
+    --bg-input: #e8e4d8;
+    /* 输入框：比卡片略深，凹陷感 */
+}
+
+
+/* ═══════════════════════════════════════
+   全局形态覆盖
+   ═══════════════════════════════════════ */
+
+/* ─── 字体 ─── */
+html.theme-zen body {
+    font-family: 'Noto Serif SC', 'Georgia', 'KaiTi', '楷体', serif;
+    background: var(--bg-app);
+}
+
+/* ─── 方格纸容器 → 鹅卵石容器 ─── */
+html.theme-zen .paper {
+    background-color: var(--bg-paper);
+    background-image: none;
+    border: none;
+    border-radius: var(--zen-radius);
+    box-shadow: var(--shadow-zen);
+    padding: 28px 32px;
+    border-bottom: 3px solid rgba(0, 0, 0, 0.03);
+    /* 微妙的底部厚度感 */
+}
+
+/* ─── 标题 ─── */
+html.theme-zen h1 {
+    border-bottom: 2px solid var(--border-light);
+    letter-spacing: 3px;
+}
+
+html.theme-zen h2 {
+    border-bottom: 1.5px solid var(--border-light);
+    letter-spacing: 2px;
+}
+
+html.theme-zen h3 {
+    letter-spacing: 1px;
+}
+
+
+/* ═══════════════════════════════════════
+   侧边栏
+   ═══════════════════════════════════════ */
+
+html.theme-zen .sidebar {
+    background: var(--bg-sidebar);
+    border-right: none;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+html.theme-zen .sidebar-logo {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html.theme-zen .sidebar-item {
+    border-radius: 0 20px 20px 0;
+    margin-right: 12px;
+    border-left: 3px solid transparent;
+    transition: var(--transition-snap);
+}
+
+html.theme-zen .sidebar-item:hover {
+    background: rgba(107, 142, 35, 0.1);
+    border-left-color: var(--color-accent);
+    transform: none;
+}
+
+html.theme-zen .sidebar-item.active {
+    background: var(--sidebar-active);
+    border-left-color: var(--color-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   顶部栏
+   ═══════════════════════════════════════ */
+
+html.theme-zen .topbar {
+    background: var(--bg-app);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ═══════════════════════════════════════
+   按钮 — 生机按钮
+   ═══════════════════════════════════════ */
+
+html.theme-zen .btn {
+    border: 2px solid var(--border-light);
+    border-radius: var(--zen-radius-btn);
+    border-style: solid;
+    transition: var(--transition-snap);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+html.theme-zen .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border-style: solid;
+}
+
+html.theme-zen .btn:active {
+    transform: scale(0.97) translateY(1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+html.theme-zen .btn-primary {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    box-shadow: 0 4px 16px rgba(107, 142, 35, 0.25);
+}
+
+html.theme-zen .btn-primary:hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    box-shadow: 0 8px 24px rgba(107, 142, 35, 0.35);
+}
+
+html.theme-zen .btn-danger {
+    border-color: var(--color-danger);
+    background: var(--color-danger);
+    box-shadow: 0 4px 16px rgba(188, 71, 73, 0.2);
+}
+
+html.theme-zen .btn-danger:hover {
+    background: #a63d3f;
+    border-color: #a63d3f;
+}
+
+
+/* ═══════════════════════════════════════
+   表单 — 呼吸输入框
+   ═══════════════════════════════════════ */
+
+html.theme-zen .input {
+    border: 2px solid transparent;
+    border-radius: 16px;
+    background: var(--bg-input);
+    transition: var(--transition-snap);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+html.theme-zen .input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(107, 142, 35, 0.12), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+html.theme-zen .input-boxed {
+    border: 2px solid transparent;
+    border-radius: 16px;
+    background: var(--bg-input);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+html.theme-zen .input-boxed:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(107, 142, 35, 0.12);
+}
+
+html.theme-zen select.input,
+html.theme-zen select.input-boxed {
+    border-radius: 16px;
+}
+
+
+/* ═══════════════════════════════════════
+   卡片 & 统计
+   ═══════════════════════════════════════ */
+
+html.theme-zen .card {
+    border: none;
+    border-radius: var(--zen-radius-sm);
+    box-shadow: var(--shadow-zen);
+}
+
+html.theme-zen .stat-card {
+    border: none;
+    border-radius: var(--zen-radius-sm);
+    background: rgba(255, 255, 255, 0.6);
+    /* 半透明白，浮于卡片上层 */
+    box-shadow: 0 4px 16px rgba(42, 51, 33, 0.06);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.03);
+}
+
+html.theme-zen .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px rgba(51, 61, 41, 0.08);
+}
+
+
+/* ═══════════════════════════════════════
+   弹窗 — 禅意弹窗
+   ═══════════════════════════════════════ */
+
+html.theme-zen .modal-overlay {
+    background: rgba(51, 61, 41, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+html.theme-zen .modal {
+    background-color: var(--bg-paper);
+    background-image: none;
+    border: none;
+    border-radius: var(--zen-radius);
+    box-shadow: 0 32px 64px rgba(51, 61, 41, 0.12);
+    animation: zen-zoom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.theme-zen .modal-title {
+    border-bottom: 1.5px solid var(--border-light);
+}
+
+html.theme-zen .modal-actions,
+html.theme-zen .modal-footer {
+    border-top: 1px solid var(--border-light);
+}
+
+@keyframes zen-zoom {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* ═══════════════════════════════════════
+   Toast — 柔和叶片通知
+   ═══════════════════════════════════════ */
+
+html.theme-zen .toast {
+    border: none;
+    border-radius: 20px;
+    background: var(--bg-paper);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transform: none;
+    animation: zen-toast-in 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.theme-zen .toast--success {
+    border-left: 5px solid var(--color-accent);
+}
+
+html.theme-zen .toast--error {
+    border-left: 5px solid var(--color-danger);
+}
+
+html.theme-zen .toast--warning {
+    border-left: 5px solid var(--color-warning);
+}
+
+html.theme-zen .toast--info {
+    border-left: 5px solid var(--color-info);
+}
+
+@keyframes zen-toast-in {
+    from {
+        transform: translateY(-20px) scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* ═══════════════════════════════════════
+   时间线
+   ═══════════════════════════════════════ */
+
+html.theme-zen .timeline::before {
+    background: var(--border-light);
+    width: 1.5px;
+}
+
+html.theme-zen .timeline-item {
+    border: none;
+    border-radius: var(--zen-radius-sm);
+    background: var(--bg-paper);
+    box-shadow: var(--shadow-zen);
+}
+
+html.theme-zen .timeline-item:hover {
+    border-color: transparent;
+    background: var(--bg-paper);
+    transform: translateX(4px);
+    box-shadow: 0 12px 30px rgba(51, 61, 41, 0.08);
+}
+
+html.theme-zen .timeline-item::before {
+    background: var(--color-accent);
+    border-color: var(--bg-app);
+}
+
+html.theme-zen .timeline-tag {
+    border-radius: 12px;
+    background: var(--fill-accent);
+    color: var(--color-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   时段选择按钮 & 强度按钮
+   ═══════════════════════════════════════ */
+
+html.theme-zen .time-picker-btn,
+html.theme-zen .ex-int-btn {
+    border-radius: 20px;
+    border: 2px solid var(--border-light);
+    transition: var(--transition-snap);
+}
+
+html.theme-zen .time-picker-btn.active,
+html.theme-zen .ex-int-btn.active {
+    border-radius: 20px;
+    border-color: var(--color-accent);
+}
+
+html.theme-zen .time-picker-btn:hover,
+html.theme-zen .ex-int-btn:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+}
+
+
+/* ═══════════════════════════════════════
+   日期选择器
+   ═══════════════════════════════════════ */
+
+html.theme-zen .date-picker {
+    border: 2px solid var(--border-light);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+html.theme-zen .date-picker .date-arrow:hover {
+    background: var(--fill-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   体重输入
+   ═══════════════════════════════════════ */
+
+html.theme-zen .weight-input-wrap input[type="number"] {
+    border-bottom: 3px solid var(--color-accent);
+}
+
+html.theme-zen .weight-input-wrap input[type="number"]:focus {
+    border-bottom-color: var(--color-accent-hover);
+}
+
+
+/* ═══════════════════════════════════════
+   运动日历
+   ═══════════════════════════════════════ */
+
+html.theme-zen .cal-arrow {
+    border-radius: 50%;
+    border-color: var(--border-light);
+}
+
+html.theme-zen .cal-arrow:hover {
+    background: var(--fill-accent);
+    border-color: var(--color-accent);
+}
+
+html.theme-zen .cal-weekdays {
+    border-bottom: 1px solid var(--border-light);
+}
+
+html.theme-zen .cal-cell {
+    border-radius: 14px;
+}
+
+html.theme-zen .cal-cell:not(.cal-cell--empty):hover {
+    background: var(--fill-accent);
+    border-color: var(--color-accent);
+}
+
+html.theme-zen .cal-cell--today {
+    border-color: var(--color-accent) !important;
+}
+
+html.theme-zen .cal-cell--checked {
+    background: rgba(107, 142, 35, 0.12);
+    border-color: rgba(107, 142, 35, 0.3);
+}
+
+html.theme-zen .cal-cell--checked .cal-day {
+    color: #4a6b1a;
+}
+
+html.theme-zen .cal-cell--checked .cal-cell-min {
+    color: var(--color-accent);
+}
+
+html.theme-zen .cal-cell--selected {
+    background: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+}
+
+html.theme-zen .cal-legend-box--checked {
+    background: rgba(107, 142, 35, 0.12);
+    border-color: rgba(107, 142, 35, 0.3);
+}
+
+html.theme-zen .cal-legend-box--today {
+    background: transparent;
+    border-color: var(--color-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   FAB 浮动按钮
+   ═══════════════════════════════════════ */
+
+html.theme-zen .fab-add {
+    border: none;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 8px 28px rgba(107, 142, 35, 0.35);
+    transition: var(--transition-snap);
+}
+
+html.theme-zen .fab-add:hover {
+    background: var(--color-accent-hover);
+    box-shadow: 0 12px 36px rgba(107, 142, 35, 0.45);
+    transform: scale(1.08);
+}
+
+html.theme-zen .fab-add:active {
+    transform: scale(0.95);
+}
+
+
+/* ═══════════════════════════════════════
+   统计芯片
+   ═══════════════════════════════════════ */
+
+html.theme-zen .ex-stat-chip {
+    border: none;
+    border-radius: 20px;
+    box-shadow: var(--shadow-zen);
+}
+
+
+/* ═══════════════════════════════════════
+   运动弹窗
+   ═══════════════════════════════════════ */
+
+html.theme-zen .exercise-modal {
+    border-radius: var(--zen-radius);
+}
+
+html.theme-zen .ex-select {
+    border-radius: 16px;
+}
+
+
+/* ═══════════════════════════════════════
+   图表控件
+   ═══════════════════════════════════════ */
+
+html.theme-zen .chart-period-btn {
+    border-radius: 20px;
+    transition: var(--transition-snap);
+}
+
+html.theme-zen .chart-period-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-1px);
+}
+
+html.theme-zen .chart-period-btn.active {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: white;
+}
+
+
+/* ═══════════════════════════════════════
+   照片上传区域
+   ═══════════════════════════════════════ */
+
+html.theme-zen .photo-upload-area {
+    border: 2px dashed var(--border-light);
+    border-radius: var(--zen-radius-sm);
+}
+
+html.theme-zen .photo-upload-area:hover {
+    border-color: var(--color-accent);
+    background: var(--fill-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   AI 分析卡片
+   ═══════════════════════════════════════ */
+
+html.theme-zen .analysis-card {
+    border: none;
+    border-radius: var(--zen-radius-sm);
+    background: var(--bg-paper);
+    box-shadow: var(--shadow-zen);
+}
+
+html.theme-zen .analysis-time {
+    border-bottom: 1px solid var(--border-light);
+}
+
+
+/* ═══════════════════════════════════════
+   标签
+   ═══════════════════════════════════════ */
+
+html.theme-zen .tag {
+    border-radius: 14px;
+    border: 1.5px solid;
+}
+
+
+/* ═══════════════════════════════════════
+   表格
+   ═══════════════════════════════════════ */
+
+html.theme-zen .table thead {
+    background: var(--ink-primary);
+}
+
+html.theme-zen .table td {
+    border-bottom: 1px solid var(--border-light);
+}
+
+html.theme-zen .table tbody tr:hover {
+    background: var(--fill-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   确认弹窗（showConfirm）
+   ═══════════════════════════════════════ */
+
+html.theme-zen #custom-confirm-overlay .modal {
+    border-radius: var(--zen-radius);
+    border: none;
+    box-shadow: 0 32px 64px rgba(51, 61, 41, 0.12);
+}
+
+
+/* ═══════════════════════════════════════
+   登录页
+   ═══════════════════════════════════════ */
+
+html.theme-zen #login-page.login-page {
+    background: linear-gradient(135deg, #2c3325 0%, #1e2518 40%, #3a4a25 70%, #5a8c1a 100%);
+}
+
+html.theme-zen #login-page .login-card {
+    background: var(--bg-paper);
+    border: none;
+    border-radius: 32px;
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+}
+
+html.theme-zen #login-page .login-field input {
+    border: 2px solid transparent;
+    border-radius: 16px;
+    background: var(--bg-input);
+}
+
+html.theme-zen #login-page .login-field input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(107, 142, 35, 0.15);
+}
+
+html.theme-zen #login-page .login-btn {
+    border: none;
+    border-radius: var(--zen-radius-btn);
+    background: var(--color-accent);
+    box-shadow: 0 8px 24px rgba(107, 142, 35, 0.35);
+}
+
+html.theme-zen #login-page .login-btn:hover {
+    background: var(--color-accent-hover);
+    box-shadow: 0 12px 32px rgba(107, 142, 35, 0.45);
+    transform: translateY(-2px);
+}
+
+html.theme-zen #login-page .login-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 4px 12px rgba(107, 142, 35, 0.2);
+}
+
+
+/* ═══════════════════════════════════════
+   骨架屏
+   ═══════════════════════════════════════ */
+
+html.theme-zen .skeleton-bar {
+    background: linear-gradient(90deg, #c8c3b5 25%, #dbd7cb 50%, #c8c3b5 75%);
+    background-size: 200% 100%;
+    border-radius: 10px;
+}
+
+
+/* ═══════════════════════════════════════
+   手机端适配
+   ═══════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    html.theme-zen .sidebar {
+        border-top: none;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    html.theme-zen .sidebar-item {
+        border-radius: 12px;
+        margin: 4px 2px;
+    }
+
+    html.theme-zen .sidebar-item.active {
+        border-left-color: transparent;
+    }
+
+    html.theme-zen .paper {
+        border-radius: 24px 10px 24px 10px;
+        padding: 20px;
+    }
+
+    html.theme-zen .modal {
+        border-radius: 24px 10px 24px 10px;
+    }
+
+    /* 登录页手机端 */
+    html.theme-zen #login-page .login-card {
+        background: transparent;
+        border-radius: 0;
+    }
+
+    html.theme-zen #login-page .login-form {
+        background: rgba(234, 232, 223, 0.95);
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    html.theme-zen #login-page .login-title {
+        color: #fff;
+    }
+}
+
+
+/* ═══════════════════════════════════════
+   主题选择器样式（两个主题共用）
+   ═══════════════════════════════════════ */
+
+.theme-picker {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.theme-card {
+    flex: 1;
+    min-width: 180px;
+    max-width: 280px;
+    padding: 16px;
+    border: 3px solid var(--border-light);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.theme-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.theme-card.active {
+    border-color: var(--color-accent);
+    background: var(--fill-accent);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.theme-card.active::after {
+    content: ' ✓';
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+.theme-card-preview {
+    height: 60px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.theme-card-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--ink-primary);
+    margin-bottom: 4px;
+}
+
+.theme-card-desc {
+    font-size: 0.75rem;
+    color: var(--ink-tertiary);
+    line-height: 1.4;
+}
+
+/* 主题1预览色 */
+.theme-preview--notebook {
+    background: linear-gradient(135deg, #fdfbf7 0%, #eceff1 50%, #2bb894 100%);
+    border: 2px dashed #2b3a42;
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+/* 主题2预览色 */
+.theme-preview--zen {
+    background: linear-gradient(135deg, #d5d0c3 0%, #f5f3ee 40%, #5a8c1a 100%);
+    border: none;
+    border-radius: 40px 15px 40px 15px;
+}
