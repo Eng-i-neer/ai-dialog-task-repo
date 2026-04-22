@@ -29,6 +29,12 @@ window.render_settings = async function (container) {
           <div class="theme-card-name">禅意自然</div>
           <div class="theme-card-desc">鹅卵石圆角 · 大地苔藓色 · 慢节奏动效</div>
         </div>
+        <div class="theme-card ${getCurrentTheme() === 'ios' ? 'active' : ''}"
+             data-theme="ios" onclick="switchTheme('ios')">
+          <div class="theme-card-preview theme-preview--ios">🍎</div>
+          <div class="theme-card-name">iOS 极简</div>
+          <div class="theme-card-desc">系统蓝 · 柔和阴影 · 快速平滑动效</div>
+        </div>
       </div>
     </div>
 
