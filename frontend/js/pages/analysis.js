@@ -1,7 +1,32 @@
 /**
  * 🤖 AI 智能分析页 — analysis.js
- * 一键触发分析 + Markdown 渲染 + 历史报告列表
+ * 一键触发分析 + 后台运行 + 轮询获取结果 + 历史报告列表
  */
+
+let _analysisDisplayIntervalId = null;
+
+function stopAnalysisDisplayTimer() {
+  if (_analysisDisplayIntervalId) {
+    clearInterval(_analysisDisplayIntervalId);
+    _analysisDisplayIntervalId = null;
+  }
+}
+
+function startAnalysisDisplayTimer(startTime) {
+  stopAnalysisDisplayTimer();
+  
+  function updateDisplay() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    updateAnalysisProgress({
+      status: 'polling',
+      elapsed: elapsed,
+      message: `AI 正在分析中... 已等待 ${elapsed} 秒`,
+    });
+  }
+  
+  updateDisplay();
+  _analysisDisplayIntervalId = setInterval(updateDisplay, 1000);
+}
 
 window.render_analysis = async function (container) {
   let selectedDate = today();
@@ -26,13 +51,27 @@ window.render_analysis = async function (container) {
         ${skeletonHTML(2)}
       </div>
 
-      <!-- 触发按钮 -->
-      <div style="text-align:center; margin-bottom:8px;">
-        <button class="btn btn-primary btn-lg" id="trigger-ai-btn" onclick="triggerAnalysis()">
-          🤖 开始 AI 分析
-        </button>
-        <div style="margin-top:8px; font-size:0.85rem; color:var(--ink-tertiary);">
-          基于今日数据，AI 将进行交叉分析并给出个性化建议
+      <!-- 触发按钮区域 -->
+      <div id="trigger-section">
+        <div style="text-align:center; margin-bottom:8px;">
+          <button class="btn btn-primary btn-lg" id="trigger-ai-btn" onclick="triggerAnalysis()">
+            🤖 开始 AI 分析
+          </button>
+          <div style="margin-top:8px; font-size:0.85rem; color:var(--ink-tertiary);">
+            基于今日数据，AI 将进行交叉分析并给出个性化建议
+          </div>
+        </div>
+      </div>
+
+      <!-- 分析状态显示（默认隐藏） -->
+      <div id="analysis-status" style="display:none; margin-bottom:16px;">
+        <div style="text-align:center; padding:20px; border-radius:12px; background:var(--fill-accent);">
+          <div id="status-icon" style="font-size:2.5rem; margin-bottom:8px; animation: pulse 1.5s infinite;">🧠</div>
+          <div id="status-text" style="font-size:1.1rem; font-weight:600; color:var(--ink-primary);">AI 正在分析中...</div>
+          <div id="status-subtext" style="font-size:0.85rem; color:var(--ink-secondary); margin-top:4px;">已等待 0 秒，通常需要 10-30 秒</div>
+          <div style="margin-top:12px; font-size:0.8rem; color:var(--ink-tertiary);">
+            💡 您可以切换页面或退出，分析会在后台继续进行
+          </div>
         </div>
       </div>
     </div>
@@ -50,12 +89,37 @@ window.render_analysis = async function (container) {
     </div>
   `;
 
-  // 日期变化时重新加载
+  stopAiPolling();
+  stopAnalysisDisplayTimer();
+
   document.getElementById('analysis-date').addEventListener('change', () => {
     selectedDate = document.getElementById('analysis-date').value;
+    stopAiPolling();
+    stopAnalysisDisplayTimer();
+    updateTriggerSection(false);
     loadDataPreview(selectedDate);
     loadHistory(selectedDate);
   });
+
+  const ongoingTask = checkOngoingAiTask(selectedDate);
+  if (ongoingTask && ongoingTask.isRunning) {
+    console.log('Found ongoing AI task, resuming polling...');
+    updateTriggerSection(true);
+    startAnalysisDisplayTimer(ongoingTask.task.startTime);
+    startAiPolling(selectedDate, {
+      onProgress: (data) => {
+        updateAnalysisProgress(data);
+      },
+      onComplete: (data) => {
+        handleAnalysisComplete(data);
+      },
+      onError: (data) => {
+        handleAnalysisError(data);
+      },
+    });
+  } else {
+    clearAiTask();
+  }
 
   await loadDataPreview(selectedDate);
   await loadHistory(selectedDate);
@@ -63,7 +127,7 @@ window.render_analysis = async function (container) {
 
 
 /**
- * 加载当天数据预览（让用户看到 AI 将分析哪些数据）
+ * 加载当天数据预览
  */
 async function loadDataPreview(date) {
   const div = document.getElementById('analysis-data-preview');
@@ -120,62 +184,165 @@ async function loadDataPreview(date) {
  * 触发 AI 分析
  */
 window.triggerAnalysis = async function () {
-  const btn = document.getElementById('trigger-ai-btn');
-  const resultSection = document.getElementById('analysis-result-section');
-  const resultDiv = document.getElementById('analysis-result');
   const date = document.getElementById('analysis-date').value;
 
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading-dots">🤖 AI 正在分析中</span>';
+  const ongoingTask = checkOngoingAiTask(date);
+  if (ongoingTask && ongoingTask.isRunning) {
+    showToast('⚠️ 已有分析任务正在进行中', 'warning');
+    return;
+  }
 
-  // 显示结果区域并展示动画
-  resultSection.style.display = 'block';
-  resultDiv.innerHTML = `
-    <div style="text-align:center; padding:40px;">
-      <div style="font-size:2rem; margin-bottom:12px; animation: pulse 1.5s infinite;">🧠</div>
-      <div style="color:var(--ink-secondary);">AI 正在分析你的数据，请稍等...</div>
-      <div style="color:var(--ink-tertiary); font-size:0.85rem; margin-top:8px;">通常需要 5-15 秒</div>
-    </div>
-  `;
+  updateTriggerSection(true);
+  
+  const requestStartTime = Date.now();
+  startAnalysisDisplayTimer(requestStartTime);
 
-  try {
-    const result = await API.post('/ai/analyze', { date });
+  showToast('🚀 AI 分析已开始，可切换页面等待', 'info');
 
-    if (result.error) {
-      throw new Error(result.error);
+  const result = await triggerAiAnalysis(date);
+
+  if (result.success && result.result) {
+    const elapsed = Math.floor((Date.now() - requestStartTime) / 1000);
+    handleAnalysisComplete({ result: result.result, elapsed: elapsed });
+  } else {
+    startAiPolling(date, {
+      onProgress: (data) => {
+        updateAnalysisProgress(data);
+      },
+      onComplete: (data) => {
+        handleAnalysisComplete(data);
+      },
+      onError: (data) => {
+        handleAnalysisError(data);
+      },
+    });
+  }
+};
+
+
+/**
+ * 更新触发按钮区域状态
+ */
+function updateTriggerSection(isAnalyzing) {
+  const triggerSection = document.getElementById('trigger-section');
+  const statusSection = document.getElementById('analysis-status');
+  const btn = document.getElementById('trigger-ai-btn');
+
+  if (!triggerSection || !statusSection) return;
+
+  if (isAnalyzing) {
+    triggerSection.style.display = 'none';
+    statusSection.style.display = 'block';
+  } else {
+    triggerSection.style.display = 'block';
+    statusSection.style.display = 'none';
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '🤖 开始 AI 分析';
     }
+  }
+}
 
-    // 渲染 Markdown 结果
+
+/**
+ * 显示分析状态
+ */
+function showAnalysisStatus(elapsed) {
+  const statusSection = document.getElementById('analysis-status');
+  if (!statusSection) return;
+
+  statusSection.style.display = 'block';
+  updateAnalysisProgress({
+    status: 'polling',
+    elapsed: elapsed,
+    message: elapsed > 0 ? `AI 正在分析中... 已等待 ${elapsed} 秒` : 'AI 正在分析中...',
+  });
+}
+
+
+/**
+ * 更新分析进度
+ */
+function updateAnalysisProgress(data) {
+  const statusIcon = document.getElementById('status-icon');
+  const statusText = document.getElementById('status-text');
+  const statusSubtext = document.getElementById('status-subtext');
+
+  if (statusIcon) {
+    statusIcon.textContent = '🧠';
+    statusIcon.style.animation = 'pulse 1.5s infinite';
+  }
+  if (statusText) statusText.textContent = 'AI 正在分析中...';
+  if (statusSubtext) {
+    statusSubtext.textContent = `已等待 ${data.elapsed} 秒，通常需要 10-30 秒`;
+  }
+}
+
+
+/**
+ * 处理分析完成
+ */
+function handleAnalysisComplete(data) {
+  const resultSection = document.getElementById('analysis-result-section');
+  const resultDiv = document.getElementById('analysis-result');
+  const date = document.getElementById('analysis-date')?.value || today();
+
+  stopAiPolling();
+  stopAnalysisDisplayTimer();
+  clearAiTask();
+
+  updateTriggerSection(false);
+
+  if (resultSection) resultSection.style.display = 'block';
+
+  if (resultDiv && data.result) {
     resultDiv.innerHTML = `
       <div class="analysis-card">
         <div class="analysis-time">
-          🕐 ${result.created_at ? result.created_at.slice(11, 16) : ''} · ${result.model_used || 'AI'}
-          ${result.tokens_used ? ` · ${result.tokens_used} tokens` : ''}
+          🕐 ${data.result.created_at ? data.result.created_at.slice(11, 16) : ''} · ${data.result.model_used || 'AI'}
+          ${data.result.tokens_used ? ` · ${data.result.tokens_used} tokens` : ''}
+          ${data.elapsed != null ? ` · 用时 ${data.elapsed} 秒` : ''}
         </div>
-        <div class="analysis-content">${renderMarkdown(result.analysis_text)}</div>
+        <div class="analysis-content">${renderMarkdown(data.result.analysis_text)}</div>
       </div>
     `;
+  }
 
-    showToast('✅ AI 分析完成！', 'success');
+  showToast('✅ AI 分析完成！', 'success');
 
-    // 刷新历史
-    await loadHistory(date);
+  loadHistory(date);
+}
 
-  } catch (err) {
+
+/**
+ * 处理分析错误
+ */
+function handleAnalysisError(data) {
+  const resultSection = document.getElementById('analysis-result-section');
+  const resultDiv = document.getElementById('analysis-result');
+
+  stopAiPolling();
+  stopAnalysisDisplayTimer();
+  clearAiTask();
+
+  updateTriggerSection(false);
+
+  if (resultSection) resultSection.style.display = 'block';
+
+  if (resultDiv) {
     resultDiv.innerHTML = `
       <div class="empty-state" style="padding:24px;">
         <div class="empty-icon">⚠️</div>
-        <div class="empty-text">${escapeHtml(err.message || 'AI 分析失败')}</div>
+        <div class="empty-text">${data.message || 'AI 分析失败'}</div>
         <div style="margin-top:8px; font-size:0.85rem; color:var(--ink-tertiary);">
           请检查「系统设置」中的 AI API Key 是否正确配置
         </div>
       </div>
     `;
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🤖 开始 AI 分析';
   }
-};
+
+  showToast('❌ ' + (data.error || '分析失败'), 'error');
+}
 
 
 /**
@@ -248,32 +415,22 @@ window.toggleReportDetail = function (btn) {
 
 /**
  * 简易 Markdown → HTML 渲染器
- * 支持：标题、加粗、列表、emoji、分割线
  */
 function renderMarkdown(text) {
   if (!text) return '';
 
   return text
-    // 转义 HTML
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    // 标题
     .replace(/^### (.+)$/gm, '<h4 style="margin:16px 0 8px; color:var(--ink-primary);">$1</h4>')
     .replace(/^## (.+)$/gm, '<h3 style="margin:20px 0 10px; color:var(--ink-primary);">$1</h3>')
-    // 加粗
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    // 斜体
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // 无序列表
     .replace(/^- (.+)$/gm, '<li style="margin:4px 0; padding-left:4px;">$1</li>')
-    // 分割线
     .replace(/^---$/gm, '<hr style="border:none; border-top:2px dashed var(--grid-line); margin:16px 0;">')
-    // 段落换行
     .replace(/\n\n/g, '<br><br>')
     .replace(/\n/g, '<br>')
-    // 包裹列表项
     .replace(/(<li[^>]*>.*<\/li>)/gs, '<ul style="padding-left:20px; margin:8px 0;">$1</ul>')
-    // 去除连续 ul 标签
     .replace(/<\/ul>\s*<ul[^>]*>/g, '');
 }

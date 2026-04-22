@@ -648,3 +648,320 @@ function skeletonHTML(bars = 3) {
     html += '</div>';
     return html;
 }
+
+
+// ═══ AI 分析后台任务管理 ═══
+
+/**
+ * AI 分析任务状态管理器
+ * 支持后台运行，页面切换/退出后仍可继续获取结果
+ */
+
+// 存储 key
+const AI_TASK_KEY = 'ai_analysis_task';
+const AI_TASK_HISTORY_KEY = 'ai_analysis_history';
+
+// 轮询间隔（毫秒）
+const POLL_INTERVAL = 2000;
+// 最大轮询次数（约 2 分钟）
+const MAX_POLL_COUNT = 60;
+
+// 当前轮询状态
+let _pollingState = {
+    isPolling: false,
+    pollCount: 0,
+    intervalId: null,
+    displayIntervalId: null,
+    taskDate: null,
+    taskStartTime: null,
+    onProgress: null,
+    onComplete: null,
+    onError: null,
+};
+
+/**
+ * 获取当前进行中的分析任务
+ */
+function getOngoingAiTask() {
+    try {
+        const saved = localStorage.getItem(AI_TASK_KEY);
+        if (saved) {
+            const task = JSON.parse(saved);
+            if (task.status === 'running' || task.status === 'triggered') {
+                return task;
+            }
+        }
+    } catch (e) {
+        console.error('Failed to get AI task:', e);
+    }
+    return null;
+}
+
+/**
+ * 保存分析任务状态
+ */
+function saveAiTask(task) {
+    try {
+        localStorage.setItem(AI_TASK_KEY, JSON.stringify(task));
+    } catch (e) {
+        console.error('Failed to save AI task:', e);
+    }
+}
+
+/**
+ * 清除分析任务状态
+ */
+function clearAiTask() {
+    try {
+        localStorage.removeItem(AI_TASK_KEY);
+    } catch (e) {
+        console.error('Failed to clear AI task:', e);
+    }
+}
+
+/**
+ * 触发 AI 分析（后台模式）
+ * @param {string} date - 分析日期 YYYY-MM-DD
+ * @returns {Promise<Object>} 任务状态
+ */
+window.triggerAiAnalysis = async function (date) {
+    const task = {
+        id: `task_${Date.now()}`,
+        date: date,
+        status: 'triggered',
+        startTime: Date.now(),
+        lastPollTime: null,
+        error: null,
+    };
+
+    saveAiTask(task);
+
+    try {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        const timeoutId = setTimeout(() => {
+            console.log('AI analysis request will continue in background');
+        }, 5000);
+
+        const result = await API.post('/ai/analyze', { date });
+
+        clearTimeout(timeoutId);
+
+        if (result && !result.error) {
+            task.status = 'completed';
+            task.completedTime = Date.now();
+            task.result = result;
+            saveAiTask(task);
+            return { success: true, task, result };
+        } else {
+            task.status = 'polling';
+            task.error = result?.error || 'Request may be running, will poll for result';
+            saveAiTask(task);
+            return { success: false, task, needPoll: true };
+        }
+
+    } catch (err) {
+        console.log('AI analysis triggered, will poll for result:', err.message);
+        task.status = 'polling';
+        task.error = err.message;
+        saveAiTask(task);
+        return { success: false, task, needPoll: true };
+    }
+};
+
+/**
+ * 开始轮询获取分析结果
+ * @param {string} date - 分析日期
+ * @param {Object} callbacks - 回调函数
+ */
+window.startAiPolling = function (date, callbacks = {}) {
+    if (_pollingState.isPolling) {
+        console.log('Polling already in progress');
+        return;
+    }
+
+    const task = getOngoingAiTask();
+    if (!task) {
+        console.log('No ongoing AI task found');
+        return;
+    }
+
+    if (task.date !== date) {
+        console.log(`Task date mismatch: task=${task.date}, requested=${date}`);
+        return;
+    }
+
+    _pollingState = {
+        isPolling: true,
+        pollCount: 0,
+        intervalId: null,
+        displayIntervalId: null,
+        taskDate: date,
+        taskStartTime: task.startTime,
+        onProgress: callbacks.onProgress || null,
+        onComplete: callbacks.onComplete || null,
+        onError: callbacks.onError || null,
+    };
+
+    const initialElapsed = Math.floor((Date.now() - task.startTime) / 1000);
+    console.log(`Starting AI polling for date: ${date}, initial elapsed: ${initialElapsed}s`);
+
+    if (_pollingState.onProgress) {
+        _pollingState.onProgress({
+            status: 'polling',
+            pollCount: 0,
+            elapsed: initialElapsed,
+            message: `AI 正在分析中... 已等待 ${initialElapsed} 秒`,
+        });
+    }
+
+    function updateDisplayTime() {
+        if (!_pollingState.isPolling) return;
+        
+        const elapsed = Math.floor((Date.now() - _pollingState.taskStartTime) / 1000);
+        if (_pollingState.onProgress) {
+            _pollingState.onProgress({
+                status: 'polling',
+                pollCount: _pollingState.pollCount,
+                elapsed: elapsed,
+                message: `AI 正在分析中... 已等待 ${elapsed} 秒`,
+            });
+        }
+    }
+
+    _pollingState.displayIntervalId = setInterval(updateDisplayTime, 1000);
+
+    _pollingState.intervalId = setInterval(async () => {
+        if (!_pollingState.isPolling) {
+            if (_pollingState.intervalId) {
+                clearInterval(_pollingState.intervalId);
+                _pollingState.intervalId = null;
+            }
+            return;
+        }
+
+        _pollingState.pollCount++;
+        const elapsed = Math.floor((Date.now() - _pollingState.taskStartTime) / 1000);
+
+        console.log(`Polling attempt ${_pollingState.pollCount}, elapsed: ${elapsed}s`);
+
+        if (_pollingState.pollCount > MAX_POLL_COUNT) {
+            console.log('Max poll count reached, stopping');
+            stopAiPolling();
+            if (_pollingState.onError) {
+                _pollingState.onError({
+                    error: '分析超时',
+                    message: 'AI 分析超时，请稍后重试或检查历史记录',
+                });
+            }
+            return;
+        }
+
+        try {
+            const history = await API.get(`/ai/history?date=${_pollingState.taskDate}`);
+            
+            if (history && history.length > 0) {
+                const latest = history[0];
+                const task = getOngoingAiTask();
+                
+                if (task) {
+                    const taskTime = new Date(task.startTime);
+                    const latestTime = latest.created_at ? new Date(latest.created_at) : null;
+                    
+                    if (latestTime && latestTime > taskTime) {
+                        console.log('Found new analysis result!');
+                        
+                        task.status = 'completed';
+                        task.completedTime = Date.now();
+                        task.result = latest;
+                        saveAiTask(task);
+                        
+                        stopAiPolling();
+                        
+                        if (_pollingState.onComplete) {
+                            _pollingState.onComplete({
+                                status: 'completed',
+                                result: latest,
+                                elapsed: elapsed,
+                            });
+                        }
+                        return;
+                    }
+                }
+            }
+
+        } catch (err) {
+            console.error('Polling error:', err);
+        }
+    }, POLL_INTERVAL);
+};
+
+/**
+ * 停止轮询
+ */
+window.stopAiPolling = function () {
+    _pollingState.isPolling = false;
+    if (_pollingState.intervalId) {
+        clearInterval(_pollingState.intervalId);
+        _pollingState.intervalId = null;
+    }
+    if (_pollingState.displayIntervalId) {
+        clearInterval(_pollingState.displayIntervalId);
+        _pollingState.displayIntervalId = null;
+    }
+    console.log('AI polling stopped');
+};
+
+/**
+ * 检查是否有进行中的分析任务
+ * @param {string} date - 要检查的日期
+ * @returns {Object|null} 任务信息
+ */
+window.checkOngoingAiTask = function (date) {
+    const task = getOngoingAiTask();
+    if (!task) return null;
+    
+    if (task.date !== date) return null;
+    
+    const elapsed = Math.floor((Date.now() - task.startTime) / 1000);
+    
+    return {
+        task,
+        elapsed,
+        isRunning: task.status === 'running' || task.status === 'polling' || task.status === 'triggered',
+    };
+};
+
+/**
+ * 获取分析任务的显示状态文本
+ */
+function getAiTaskDisplayInfo(task) {
+    const elapsed = Math.floor((Date.now() - task.startTime) / 1000);
+    
+    if (task.status === 'triggered') {
+        return {
+            text: '🚀 分析已触发',
+            subtext: `正在连接 AI 服务...`,
+            class: 'info',
+        };
+    } else if (task.status === 'polling') {
+        return {
+            text: '🧠 AI 正在分析中',
+            subtext: `已等待 ${elapsed} 秒，通常需要 10-30 秒`,
+            class: 'warning',
+        };
+    } else if (task.status === 'completed') {
+        return {
+            text: '✅ 分析完成',
+            subtext: `用时 ${elapsed} 秒`,
+            class: 'success',
+        };
+    } else {
+        return {
+            text: '⏳ 处理中',
+            subtext: `已等待 ${elapsed} 秒`,
+            class: 'neutral',
+        };
+    }
+}
