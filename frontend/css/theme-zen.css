@@ -395,8 +395,101 @@ html.theme-zen .date-picker {
     overflow: hidden;
 }
 
+html.theme-zen .date-picker input[type="date"] {
+    padding: 12px 16px;
+    background: transparent;
+}
+
+html.theme-zen .date-picker input[type="date"]:hover {
+    background: var(--fill-accent);
+}
+
+html.theme-zen .date-picker .date-arrow {
+    padding: 12px 16px;
+    font-size: 1.1rem;
+}
+
 html.theme-zen .date-picker .date-arrow:hover {
     background: var(--fill-accent);
+}
+
+/* 日期选择按钮 */
+html.theme-zen .date-picker-btn {
+    border: 2px solid var(--border-light);
+    border-radius: 20px;
+    padding: 12px 20px;
+}
+
+html.theme-zen .date-picker-btn:hover {
+    border-color: var(--color-accent);
+    background: var(--fill-accent);
+}
+
+/* 日期选择弹窗 */
+html.theme-zen .date-picker-overlay {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+html.theme-zen .date-picker-modal {
+    border: 2px solid var(--border-light);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+html.theme-zen .date-picker-nav-btn {
+    border-color: var(--border-light);
+    border-radius: 12px;
+}
+
+html.theme-zen .date-picker-nav-btn:hover {
+    background: var(--fill-accent);
+    border-color: var(--color-accent);
+}
+
+html.theme-zen .date-picker-weekday {
+    color: var(--ink-tertiary);
+}
+
+html.theme-zen .date-picker-day {
+    border-radius: 14px;
+    font-weight: 500;
+}
+
+html.theme-zen .date-picker-day:hover {
+    background: var(--fill-accent);
+    border-color: var(--color-accent);
+}
+
+html.theme-zen .date-picker-day.selected {
+    background: var(--color-accent);
+    color: white;
+}
+
+html.theme-zen .date-picker-day.today {
+    border-color: var(--color-accent);
+    border-width: 2px;
+}
+
+html.theme-zen .date-picker-input {
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+    background: var(--bg-input);
+}
+
+html.theme-zen .date-picker-input:focus {
+    border-color: var(--color-accent);
+    background: var(--bg-paper);
+}
+
+html.theme-zen .date-picker-quick-btn {
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+html.theme-zen .date-picker-quick-btn:hover {
+    background: var(--color-accent);
+    color: white;
 }
 
 

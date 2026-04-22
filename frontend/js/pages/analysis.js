@@ -12,7 +12,11 @@ window.render_analysis = async function (container) {
         <h2 style="margin:0; border:none; padding:0;">🤖 AI 智能分析</h2>
         <div class="date-picker">
           <button class="date-arrow" onclick="adjustDate('analysis-date', -1)">◀</button>
-          <input type="date" id="analysis-date" value="${selectedDate}">
+          <input type="text" id="analysis-date" value="${selectedDate}"
+                 readonly
+                 onclick="openDatePickerModal('analysis-date')"
+                 title="点击打开日期选择器"
+                 style="cursor: pointer; text-align: center; font-weight: 600;">
           <button class="date-arrow" onclick="adjustDate('analysis-date', 1)">▶</button>
         </div>
       </div>
