@@ -8,6 +8,7 @@
 const THEMES = {
     notebook: { name: '📓 手帐记事本', className: '' },
     zen: { name: '🌿 禅意自然', className: 'theme-zen' },
+    ios: { name: '🍎 iOS 极简', className: 'theme-ios' },
 };
 
 /** 加载用户保存的主题（启动时调用） */
