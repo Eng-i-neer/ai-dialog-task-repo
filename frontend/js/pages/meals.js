@@ -31,7 +31,11 @@ window.render_meals = async function (container) {
         <h2 style="margin:0; border:none; padding:0;">🍽️ 记录饮食</h2>
         <div class="date-picker">
           <button class="date-arrow" onclick="adjustDate('meal-date', -1)">◀</button>
-          <input type="date" id="meal-date" value="${selectedDate}">
+          <input type="text" id="meal-date" value="${selectedDate}"
+                 readonly
+                 onclick="openDatePickerModal('meal-date')"
+                 title="点击打开日期选择器"
+                 style="cursor: pointer; text-align: center; font-weight: 600;">
           <button class="date-arrow" onclick="adjustDate('meal-date', 1)">▶</button>
         </div>
       </div>

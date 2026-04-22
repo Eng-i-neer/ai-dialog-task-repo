@@ -21,6 +21,7 @@ window.render_dashboard = async function (container) {
       <div class="stat-card">
         <div class="stat-label">距离目标</div>
         <div class="stat-value" id="stat-gap">--</div>
+        <div class="stat-change neutral" id="stat-progress"></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">BMI</div>
@@ -135,11 +136,16 @@ function renderStats(stats, todayData) {
 
   // 距离目标
   const gapEl = document.getElementById('stat-gap');
+  const progressEl = document.getElementById('stat-progress');
   if (gapEl && stats.current_weight != null && stats.target_weight != null) {
     const gap = stats.current_weight - stats.target_weight;
     const cls = gap > 0 ? 'positive' : gap < 0 ? 'negative' : 'neutral';
     gapEl.innerHTML = `${gap > 0 ? '-' : '+'}${Math.abs(gap).toFixed(1)}<span class="stat-unit">kg</span>`;
-    gapEl.parentElement.insertAdjacentHTML('beforeend', `<div class="stat-change ${cls}">${stats.progress != null ? stats.progress.toFixed(0) + '% 已完成' : ''}</div>`);
+    if (progressEl) {
+      progressEl.textContent = stats.progress != null ? `${stats.progress.toFixed(0)}% 已完成` : '';
+      progressEl.className = `stat-change ${cls}`;
+      progressEl.style.display = stats.progress != null ? '' : 'none';
+    }
   }
 
   // BMI
