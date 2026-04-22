@@ -1,0 +1,847 @@
+/* ═══════════════════════════════════════════════════════
+   🍎 Theme 3: "iOS Minimal" — iOS 极简风格
+   通过 html.theme-ios 激活，覆盖全局 CSS 变量 + 组件形态
+   设计特点：简洁、扁平、圆角、柔和阴影、系统蓝
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── 变量覆盖 ─── */
+html.theme-ios {
+    /* 背景色 */
+    --bg-app: #f2f2f7;
+    --bg-paper: #ffffff;
+    --grid-line: #e5e5ea;
+    --bg-sidebar: #1c1c1e;
+    --sidebar-text: #ffffff;
+    --sidebar-active: rgba(0, 122, 255, 0.15);
+
+    /* 文字色 */
+    --ink-primary: #000000;
+    --ink-secondary: #8e8e93;
+    --ink-tertiary: #aeaeb2;
+    --border-ink: #3a3a3c;
+    --border-light: #c6c6c8;
+
+    /* 功能色 - iOS 系统色 */
+    --color-accent: #007aff;
+    --color-accent-hover: #0051d5;
+    --color-success: #34c759;
+    --color-warning: #ff9500;
+    --color-danger: #ff3b30;
+    --color-info: #5ac8fa;
+
+    /* 半透明填充 */
+    --fill-accent: rgba(0, 122, 255, 0.08);
+    --fill-success: rgba(52, 199, 89, 0.08);
+    --fill-warning: rgba(255, 149, 0, 0.08);
+    --fill-danger: rgba(255, 59, 48, 0.08);
+
+    /* 动效：快速平滑 */
+    --transition-snap: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --transition-normal: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    /* iOS 专有变量 */
+    --ios-radius: 16px;
+    --ios-radius-sm: 12px;
+    --ios-radius-btn: 12px;
+    --shadow-ios: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-ios-hover: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --bg-input: #f2f2f7;
+}
+
+
+/* ═══════════════════════════════════════
+   全局形态覆盖
+   ═══════════════════════════════════════ */
+
+/* ─── 字体 ─── */
+html.theme-ios body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 17px;
+    background: var(--bg-app);
+}
+
+/* ─── 方格纸容器 → iOS 卡片 ─── */
+html.theme-ios .paper {
+    background-color: var(--bg-paper);
+    background-image: none;
+    border: none;
+    border-radius: var(--ios-radius);
+    box-shadow: var(--shadow-ios);
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+/* ─── 标题 ─── */
+html.theme-ios h1 {
+    border-bottom: 1px solid var(--grid-line);
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+html.theme-ios h2 {
+    border-bottom: 1px solid var(--grid-line);
+    letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+html.theme-ios h3 {
+    letter-spacing: 0.2px;
+    font-weight: 600;
+}
+
+
+/* ═══════════════════════════════════════
+   侧边栏
+   ═══════════════════════════════════════ */
+
+html.theme-ios .sidebar {
+    background: var(--bg-sidebar);
+    border-right: none;
+}
+
+html.theme-ios .sidebar-logo {
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+
+html.theme-ios .sidebar-item {
+    border-radius: 10px;
+    margin: 4px 12px;
+    border-left: none;
+    padding: 12px 16px;
+}
+
+html.theme-ios .sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-left-color: transparent;
+    transform: none;
+}
+
+html.theme-ios .sidebar-item.active {
+    background: var(--sidebar-active);
+    border-left-color: transparent;
+}
+
+
+/* ═══════════════════════════════════════
+   顶部栏
+   ═══════════════════════════════════════ */
+
+html.theme-ios .topbar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+
+/* ═══════════════════════════════════════
+   按钮 — iOS 风格按钮
+   ═══════════════════════════════════════ */
+
+html.theme-ios .btn {
+    border: none;
+    border-radius: var(--ios-radius-btn);
+    border-style: solid;
+    border-width: 1.5px;
+    border-color: transparent;
+    background: var(--bg-input);
+    color: var(--color-accent);
+    font-weight: 500;
+    transition: var(--transition-snap);
+}
+
+html.theme-ios .btn:hover {
+    transform: none;
+    background: #e5e5ea;
+}
+
+html.theme-ios .btn:active {
+    transform: scale(0.98);
+    opacity: 0.8;
+}
+
+html.theme-ios .btn-primary {
+    background: var(--color-accent);
+    color: white;
+    border: none;
+}
+
+html.theme-ios .btn-primary:hover {
+    background: var(--color-accent-hover);
+    border: none;
+}
+
+html.theme-ios .btn-danger {
+    background: var(--color-danger);
+    color: #fff;
+    border: none;
+}
+
+html.theme-ios .btn-danger:hover {
+    background: #ff2d26;
+}
+
+
+/* ═══════════════════════════════════════
+   表单 — iOS 输入框
+   ═══════════════════════════════════════ */
+
+html.theme-ios .input {
+    border: 1.5px solid transparent;
+    border-radius: var(--ios-radius-sm);
+    background: var(--bg-input);
+    padding: 12px 16px;
+    transition: var(--transition-snap);
+}
+
+html.theme-ios .input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    background: white;
+}
+
+html.theme-ios .input-boxed {
+    border: 1.5px solid transparent;
+    border-radius: var(--ios-radius-sm);
+    background: var(--bg-input);
+}
+
+html.theme-ios .input-boxed:focus {
+    border-color: var(--color-accent);
+}
+
+html.theme-ios select.input,
+html.theme-ios select.input-boxed {
+    border-radius: var(--ios-radius-sm);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%238e8e93' d='M7 9L2 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+}
+
+
+/* ═══════════════════════════════════════
+   卡片 & 统计
+   ═══════════════════════════════════════ */
+
+html.theme-ios .card {
+    border: none;
+    border-radius: var(--ios-radius-sm);
+    box-shadow: var(--shadow-ios);
+}
+
+html.theme-ios .stat-card {
+    border: none;
+    border-radius: var(--ios-radius-sm);
+    background: white;
+    box-shadow: var(--shadow-ios);
+    border-bottom: none;
+}
+
+html.theme-ios .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-ios-hover);
+}
+
+
+/* ═══════════════════════════════════════
+   弹窗 — iOS 弹窗
+   ═══════════════════════════════════════ */
+
+html.theme-ios .modal-overlay {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+html.theme-ios .modal {
+    background-color: var(--bg-paper);
+    background-image: none;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: ios-modal-in 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html.theme-ios .modal-title {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+html.theme-ios .modal-actions,
+html.theme-ios .modal-footer {
+    border-top: 0.5px solid var(--grid-line);
+}
+
+@keyframes ios-modal-in {
+    from {
+        transform: translateY(30px) scale(0.98);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* ═══════════════════════════════════════
+   Toast — iOS 通知
+   ═══════════════════════════════════════ */
+
+html.theme-ios .toast {
+    border: none;
+    border-radius: 14px;
+    background: rgba(28, 28, 30, 0.95);
+    color: white;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    transform: none;
+    animation: ios-toast-in 0.3s ease-out;
+    font-weight: 500;
+}
+
+html.theme-ios .toast--success {
+    border-left: none;
+}
+
+html.theme-ios .toast--error {
+    border-left: none;
+}
+
+html.theme-ios .toast--warning {
+    border-left: none;
+}
+
+html.theme-ios .toast--info {
+    border-left: none;
+}
+
+@keyframes ios-toast-in {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
+/* ═══════════════════════════════════════
+   时间线
+   ═══════════════════════════════════════ */
+
+html.theme-ios .timeline::before {
+    background: var(--grid-line);
+    width: 2px;
+}
+
+html.theme-ios .timeline-item {
+    border: none;
+    border-radius: var(--ios-radius-sm);
+    background: white;
+    box-shadow: var(--shadow-ios);
+}
+
+html.theme-ios .timeline-item:hover {
+    border-color: transparent;
+    background: white;
+    transform: none;
+    box-shadow: var(--shadow-ios-hover);
+}
+
+html.theme-ios .timeline-item::before {
+    background: var(--color-accent);
+    border-color: var(--bg-app);
+    width: 12px;
+    height: 12px;
+}
+
+html.theme-ios .timeline-tag {
+    border-radius: 14px;
+    background: var(--fill-accent);
+    color: var(--color-accent);
+    border: none;
+}
+
+
+/* ═══════════════════════════════════════
+   时段选择按钮 & 强度按钮
+   ═══════════════════════════════════════ */
+
+html.theme-ios .time-picker-btn,
+html.theme-ios .ex-int-btn {
+    border-radius: 20px;
+    border: 1.5px solid var(--grid-line);
+    background: white;
+    transition: var(--transition-snap);
+}
+
+html.theme-ios .time-picker-btn.active,
+html.theme-ios .ex-int-btn.active {
+    border-radius: 20px;
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: white;
+}
+
+html.theme-ios .time-picker-btn:hover,
+html.theme-ios .ex-int-btn:hover {
+    border-color: var(--color-accent);
+    transform: none;
+}
+
+
+/* ═══════════════════════════════════════
+   日期选择器
+   ═══════════════════════════════════════ */
+
+html.theme-ios .date-picker {
+    border: 1.5px solid var(--grid-line);
+    border-radius: var(--ios-radius-sm);
+    overflow: hidden;
+    background: white;
+}
+
+html.theme-ios .date-picker input[type="date"] {
+    padding: 12px 16px;
+    background: transparent;
+}
+
+html.theme-ios .date-picker input[type="date"]:hover {
+    background: var(--fill-accent);
+}
+
+html.theme-ios .date-picker .date-arrow {
+    padding: 12px 16px;
+    font-size: 1.1rem;
+}
+
+html.theme-ios .date-picker .date-arrow:hover {
+    background: var(--fill-accent);
+    color: var(--color-accent);
+}
+
+/* 日期选择按钮 */
+html.theme-ios .date-picker-btn {
+    border: 1.5px solid var(--grid-line);
+    border-radius: var(--ios-radius-sm);
+    padding: 12px 18px;
+    background: white;
+    box-shadow: var(--shadow-ios);
+}
+
+html.theme-ios .date-picker-btn:hover {
+    border-color: var(--color-accent);
+    background: var(--fill-accent);
+    box-shadow: var(--shadow-ios-hover);
+}
+
+/* 日期选择弹窗 */
+html.theme-ios .date-picker-overlay {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+html.theme-ios .date-picker-modal {
+    border: none;
+    border-radius: 20px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+html.theme-ios .date-picker-nav-btn {
+    border-color: var(--grid-line);
+    border-radius: 10px;
+}
+
+html.theme-ios .date-picker-nav-btn:hover {
+    background: var(--fill-accent);
+    border-color: var(--color-accent);
+}
+
+html.theme-ios .date-picker-weekday {
+    color: var(--ink-tertiary);
+}
+
+html.theme-ios .date-picker-day {
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+html.theme-ios .date-picker-day:hover {
+    background: var(--fill-accent);
+}
+
+html.theme-ios .date-picker-day.selected {
+    background: var(--color-accent);
+    color: white;
+}
+
+html.theme-ios .date-picker-day.today {
+    border-color: var(--color-accent);
+    border-width: 2px;
+}
+
+html.theme-ios .date-picker-input {
+    border: 1.5px solid transparent;
+    border-radius: var(--ios-radius-sm);
+    background: var(--bg-input);
+}
+
+html.theme-ios .date-picker-input:focus {
+    border-color: var(--color-accent);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+html.theme-ios .date-picker-quick-btn {
+    border-radius: 14px;
+    padding: 8px 14px;
+    border: 1.5px solid var(--grid-line);
+    background: white;
+}
+
+html.theme-ios .date-picker-quick-btn:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+
+/* ═══════════════════════════════════════
+   体重输入
+   ═══════════════════════════════════════ */
+
+html.theme-ios .weight-input-wrap input[type="number"] {
+    border-bottom: 3px solid var(--color-accent);
+    font-weight: 600;
+}
+
+html.theme-ios .weight-input-wrap input[type="number"]:focus {
+    border-bottom-color: var(--color-accent-hover);
+}
+
+
+/* ═══════════════════════════════════════
+   运动日历
+   ═══════════════════════════════════════ */
+
+html.theme-ios .cal-arrow {
+    border-radius: 50%;
+    border-color: var(--grid-line);
+}
+
+html.theme-ios .cal-arrow:hover {
+    background: var(--fill-accent);
+    border-color: var(--color-accent);
+}
+
+html.theme-ios .cal-weekdays {
+    border-bottom: 0.5px solid var(--grid-line);
+}
+
+html.theme-ios .cal-cell {
+    border-radius: 12px;
+}
+
+html.theme-ios .cal-cell:not(.cal-cell--empty):hover {
+    background: var(--fill-accent);
+    border-color: transparent;
+}
+
+html.theme-ios .cal-cell--today {
+    border-color: var(--color-accent) !important;
+}
+
+html.theme-ios .cal-cell--checked {
+    background: rgba(0, 122, 255, 0.12);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+html.theme-ios .cal-cell--checked .cal-day {
+    color: #0051d5;
+}
+
+html.theme-ios .cal-cell--checked .cal-cell-min {
+    color: var(--color-accent);
+}
+
+html.theme-ios .cal-cell--selected {
+    background: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+}
+
+html.theme-ios .cal-legend-box--checked {
+    background: rgba(0, 122, 255, 0.12);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+html.theme-ios .cal-legend-box--today {
+    background: transparent;
+    border-color: var(--color-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   FAB 浮动按钮
+   ═══════════════════════════════════════ */
+
+html.theme-ios .fab-add {
+    border: none;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 4px 20px rgba(0, 122, 255, 0.4);
+    transition: var(--transition-snap);
+}
+
+html.theme-ios .fab-add:hover {
+    background: var(--color-accent-hover);
+    box-shadow: 0 6px 28px rgba(0, 122, 255, 0.5);
+    transform: scale(1.05);
+}
+
+html.theme-ios .fab-add:active {
+    transform: scale(0.95);
+}
+
+
+/* ═══════════════════════════════════════
+   统计芯片
+   ═══════════════════════════════════════ */
+
+html.theme-ios .ex-stat-chip {
+    border: none;
+    border-radius: var(--ios-radius-sm);
+    box-shadow: var(--shadow-ios);
+    background: white;
+}
+
+
+/* ═══════════════════════════════════════
+   运动弹窗
+   ═══════════════════════════════════════ */
+
+html.theme-ios .exercise-modal {
+    border-radius: 20px;
+}
+
+html.theme-ios .ex-select {
+    border-radius: var(--ios-radius-sm);
+}
+
+
+/* ═══════════════════════════════════════
+   图表控件
+   ═══════════════════════════════════════ */
+
+html.theme-ios .chart-period-btn {
+    border-radius: 20px;
+    border: 1.5px solid var(--grid-line);
+    background: white;
+    transition: var(--transition-snap);
+}
+
+html.theme-ios .chart-period-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: none;
+}
+
+html.theme-ios .chart-period-btn.active {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: white;
+}
+
+
+/* ═══════════════════════════════════════
+   照片上传区域
+   ═══════════════════════════════════════ */
+
+html.theme-ios .photo-upload-area {
+    border: 2px dashed var(--grid-line);
+    border-radius: var(--ios-radius);
+}
+
+html.theme-ios .photo-upload-area:hover {
+    border-color: var(--color-accent);
+    background: var(--fill-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   AI 分析卡片
+   ═══════════════════════════════════════ */
+
+html.theme-ios .analysis-card {
+    border: none;
+    border-radius: var(--ios-radius-sm);
+    background: white;
+    box-shadow: var(--shadow-ios);
+}
+
+html.theme-ios .analysis-time {
+    border-bottom: 0.5px solid var(--grid-line);
+}
+
+
+/* ═══════════════════════════════════════
+   标签
+   ═══════════════════════════════════════ */
+
+html.theme-ios .tag {
+    border-radius: 14px;
+    border: 1.5px solid;
+}
+
+
+/* ═══════════════════════════════════════
+   表格
+   ═══════════════════════════════════════ */
+
+html.theme-ios .table thead {
+    background: var(--bg-input);
+}
+
+html.theme-ios .table td {
+    border-bottom: 0.5px solid var(--grid-line);
+}
+
+html.theme-ios .table tbody tr:hover {
+    background: var(--fill-accent);
+}
+
+
+/* ═══════════════════════════════════════
+   确认弹窗
+   ═══════════════════════════════════════ */
+
+html.theme-ios #custom-confirm-overlay .modal {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ═══════════════════════════════════════
+   登录页
+   ═══════════════════════════════════════ */
+
+html.theme-ios #login-page.login-page {
+    background: linear-gradient(180deg, #f2f2f7 0%, #e5e5ea 100%);
+}
+
+html.theme-ios #login-page .login-card {
+    background: white;
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+html.theme-ios #login-page .login-field input {
+    border: 1.5px solid transparent;
+    border-radius: var(--ios-radius-sm);
+    background: var(--bg-input);
+}
+
+html.theme-ios #login-page .login-field input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+html.theme-ios #login-page .login-btn {
+    border: none;
+    border-radius: var(--ios-radius-btn);
+    background: var(--color-accent);
+    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+}
+
+html.theme-ios #login-page .login-btn:hover {
+    background: var(--color-accent-hover);
+    box-shadow: 0 6px 24px rgba(0, 122, 255, 0.4);
+    transform: none;
+}
+
+html.theme-ios #login-page .login-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+}
+
+
+/* ═══════════════════════════════════════
+   骨架屏
+   ═══════════════════════════════════════ */
+
+html.theme-ios .skeleton-bar {
+    background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
+    background-size: 200% 100%;
+    border-radius: 8px;
+}
+
+
+/* ═══════════════════════════════════════
+   手机端适配
+   ═══════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    html.theme-ios .sidebar {
+        border-top: none;
+        background: rgba(28, 28, 30, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+
+    html.theme-ios .sidebar-item {
+        border-radius: 12px;
+        margin: 2px;
+    }
+
+    html.theme-ios .sidebar-item.active {
+        border-left-color: transparent;
+    }
+
+    html.theme-ios .paper {
+        border-radius: var(--ios-radius-sm);
+        padding: 16px;
+    }
+
+    html.theme-ios .modal {
+        border-radius: 20px;
+    }
+
+    /* 登录页手机端 */
+    html.theme-ios #login-page .login-card {
+        background: transparent;
+        border-radius: 0;
+    }
+
+    html.theme-ios #login-page .login-form {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    html.theme-ios #login-page .login-title {
+        color: var(--ink-primary);
+    }
+}
+
+
+/* ═══════════════════════════════════════
+   主题选择器预览样式
+   ═══════════════════════════════════════ */
+
+.theme-preview--ios {
+    background: linear-gradient(135deg, #f2f2f7 0%, #ffffff 50%, #007aff 100%);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
